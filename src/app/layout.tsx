@@ -7,7 +7,7 @@ import Footer from "@/components/layout/Footer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://scalifylabs.com'), // Replace with actual domain when live
+  metadataBase: new URL('https://newsll2026.vercel.app'), // Updated to Vercel deployment URL
   title: {
     default: "Scalify Labs | Best Digital Marketing & SEO Agency in Ranchi, Jharkhand",
     template: "%s | Scalify Labs - Ranchi",
