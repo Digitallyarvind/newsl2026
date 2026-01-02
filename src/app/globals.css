@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #FFFDF5;
+  /* Warm Cream */
+  --foreground: #111111;
+  /* Strong Black */
+
+  /* Brand Colors - Get Hyped Theme */
+  --brand-cream: #FFFDF5;
+  --brand-green: #2ECC71;
+  --brand-pink: #FF80CA;
+  --brand-blue: #0085FF;
+  --brand-orange: #FF5533;
+
+  /* Mapping to standard semantic names */
+  --primary: var(--brand-orange);
+  /* CTA Color */
+  --primary-foreground: #ffffff;
+
+  --secondary: #EBE9E1;
+  /* Darker Cream for inputs/secondary backgrounds */
+  --secondary-foreground: #111111;
+
+  --muted: #888888;
+  --muted-foreground: #555555;
+
+  --brand-blue-ref: #2563eb;
+  /* Keeping ref for legacy if needed, but redefining primary */
+}
+
+/* Dark mode overrides - Keeping light theme primary for this aesthetic as requested, 
+   but providing sensible fallbacks if system forces dark */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #111111;
+    --foreground: #FFFDF5;
+
+    --brand-cream: #1a1a1a;
+    /* Dark equivalent */
+
+    --secondary: #222222;
+    --secondary-foreground: #FFFDF5;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: 'Inter', sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
