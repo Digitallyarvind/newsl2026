@@ -1,13 +1,7 @@
 import { PrismaClient } from '@/generated/client/client'
 
 const prismaClientSingleton = () => {
-    return new PrismaClient({
-        datasources: {
-            db: {
-                url: "file:/Users/ananddesai/projects/labs/prisma/dev.db"
-            }
-        }
-    })
+    return new PrismaClient()
 }
 
 declare global {
