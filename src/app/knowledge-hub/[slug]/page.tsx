@@ -8,6 +8,8 @@ import { Section } from '@/components/ui/Section';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
+import { CTA } from '@/components/shared/CTA';
+import { ContactForm } from '@/components/shared/ContactForm';
 
 interface Props {
     params: {
@@ -39,16 +41,25 @@ export async function generateStaticParams() {
 
 export default function BlogPostPage({ params }: Props) {
     const post = getPostBySlug(params.slug);
+    const allPosts = getAllPosts();
 
     if (!post) {
         notFound();
     }
 
+    // Get latest 3 posts excluding current
+    const latestPosts = allPosts
+        .filter(p => p.id !== post.id)
+        .slice(0, 3);
+
+    // Get unique categories
+    const categories = Array.from(new Set(allPosts.map(p => p.category))).sort();
+
     return (
         <main className="min-h-screen bg-background">
             {/* Header Section */}
             <Section className="pt-32 pb-12 lg:pt-48 lg:pb-20 border-b border-black/5">
-                <div className="max-w-4xl mx-auto">
+                <div className="max-w-6xl mx-auto">
                     <Link href="/knowledge-hub" className="inline-flex items-center text-sm font-bold text-muted-foreground hover:text-foreground mb-8 transition-colors uppercase tracking-widest">
                         <ArrowLeft className="mr-2 w-4 h-4" />
                         Back to Hub
@@ -63,7 +74,7 @@ export default function BlogPostPage({ params }: Props) {
                         </span>
                     </div>
 
-                    <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-foreground leading-[1.1] mb-8 tracking-tight">
+                    <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-foreground leading-[1.1] mb-8 tracking-tight max-w-4xl">
                         {post.title}
                     </h1>
 
@@ -79,41 +90,76 @@ export default function BlogPostPage({ params }: Props) {
                 </div>
             </Section>
 
-            {/* Content Section */}
+            {/* Content Section with Sidebar */}
             <Section className="py-16 lg:py-24">
-                <div className="max-w-3xl mx-auto">
-                    <div
-                        className="prose prose-xl prose-slate md:prose-2xl prose-headings:font-black prose-headings:tracking-tight prose-headings:text-foreground prose-p:text-muted-foreground prose-p:font-medium prose-p:leading-relaxed prose-a:text-brand-blue prose-a:font-bold prose-strong:text-foreground prose-strong:font-bold prose-li:text-muted-foreground prose-li:font-medium"
-                        dangerouslySetInnerHTML={{ __html: post.content }}
-                    />
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 max-w-7xl mx-auto">
 
-                    <div className="mt-16 pt-10 border-t border-black/10">
-                        <h4 className="text-sm font-black text-foreground uppercase tracking-widest mb-6">Tags</h4>
-                        <div className="flex flex-wrap gap-3">
-                            {post.tags.map(tag => (
-                                <span key={tag} className="text-sm font-bold text-muted-foreground bg-secondary px-4 py-2 rounded-full">#{tag}</span>
-                            ))}
+                    {/* Main Content */}
+                    <div className="lg:col-span-8">
+                        <div
+                            className="prose prose-xl prose-slate md:prose-2xl prose-headings:font-black prose-headings:tracking-tight prose-headings:text-foreground prose-p:text-muted-foreground prose-p:font-medium prose-p:leading-relaxed prose-a:text-brand-blue prose-a:font-bold prose-strong:text-foreground prose-strong:font-bold prose-li:text-muted-foreground prose-li:font-medium max-w-none"
+                            dangerouslySetInnerHTML={{ __html: post.content }}
+                        />
+
+                        <div className="mt-16 pt-10 border-t border-black/10">
+                            <h4 className="text-sm font-black text-foreground uppercase tracking-widest mb-6">Tags</h4>
+                            <div className="flex flex-wrap gap-3">
+                                {post.tags.map(tag => (
+                                    <span key={tag} className="text-sm font-bold text-muted-foreground bg-secondary px-4 py-2 rounded-full">#{tag}</span>
+                                ))}
+                            </div>
                         </div>
+                    </div>
+
+                    {/* Sidebar */}
+                    <div className="lg:col-span-4 space-y-12 h-fit lg:sticky lg:top-32">
+
+                        {/* Enquiry Form Widget */}
+                        <div className="bg-brand-cream/50 rounded-[2rem] p-8 border border-brand-orange/10">
+                            <h3 className="text-2xl font-black mb-2">Have questions?</h3>
+                            <p className="text-muted-foreground font-medium mb-6">Get your free marketing audit today.</p>
+                            <ContactForm className="bg-white shadow-none border-0" />
+                        </div>
+
+                        {/* Recent Articles */}
+                        <div>
+                            <h3 className="text-lg font-black uppercase tracking-widest mb-6 border-b pb-2">Latest Insights</h3>
+                            <div className="space-y-6">
+                                {latestPosts.map(p => (
+                                    <Link key={p.id} href={`/knowledge-hub/${p.slug}`} className="group block">
+                                        <h4 className="text-lg font-bold leading-tight group-hover:text-brand-blue transition-colors mb-2">
+                                            {p.title}
+                                        </h4>
+                                        <p className="text-sm text-muted-foreground font-medium">
+                                            {new Date(p.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                        </p>
+                                    </Link>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Categories */}
+                        <div>
+                            <h3 className="text-lg font-black uppercase tracking-widest mb-6 border-b pb-2">Categories</h3>
+                            <div className="flex flex-wrap gap-2">
+                                {categories.map(cat => (
+                                    <Link
+                                        key={cat}
+                                        href="/knowledge-hub" // Ideally this would link to a filtered view, but for now linking to hub is fine
+                                        className="text-sm font-bold bg-secondary hover:bg-black hover:text-white transition-colors px-4 py-2 rounded-full"
+                                    >
+                                        {cat}
+                                    </Link>
+                                ))}
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </Section>
 
-            {/* CTA Section */}
-            <Section className="py-20 lg:py-32 bg-black text-white rounded-t-[3rem] mt-12">
-                <div className="max-w-4xl mx-auto text-center px-4">
-                    <h2 className="text-5xl md:text-7xl font-black tracking-tighter mb-8">
-                        Turn insights into <span className="text-brand-green">Action.</span>
-                    </h2>
-                    <p className="text-xl md:text-2xl text-gray-400 mb-12 max-w-2xl mx-auto">
-                        Ready to apply these strategies to your business? Let&apos;s talk growth.
-                    </p>
-                    <Link href="/contact">
-                        <Button size="lg" className="bg-white text-black hover:bg-white/90 text-xl px-12 py-8 h-auto font-black rounded-full">
-                            START NOW <ArrowUpRight className="ml-2 w-6 h-6" />
-                        </Button>
-                    </Link>
-                </div>
-            </Section>
+            {/* Bottom CTA */}
+            <CTA />
         </main>
     );
 }

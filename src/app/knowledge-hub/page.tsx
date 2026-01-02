@@ -3,6 +3,7 @@ import React from 'react';
 import { Metadata } from 'next';
 import { getAllPosts } from '@/data/blog-posts';
 import BlogCard from '@/components/knowledge-hub/BlogCard';
+import { KnowledgeHubFilter } from '@/components/knowledge-hub/KnowledgeHubFilter';
 import { Section } from '@/components/ui/Section';
 import { CTA } from '@/components/shared/CTA';
 
@@ -29,16 +30,7 @@ export default function KnowledgeHubPage() {
             </Section>
 
             <Section className="pb-20 lg:pb-32">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {posts.map((post, index) => (
-                        <BlogCard key={post.id} post={post} index={index} />
-                    ))}
-                </div>
-                {posts.length === 0 && (
-                    <div className="text-center py-20 rounded-[3rem] bg-secondary">
-                        <p className="text-muted-foreground text-xl font-bold">No articles yet. We&apos;re writing...</p>
-                    </div>
-                )}
+                <KnowledgeHubFilter initialPosts={posts} />
             </Section>
 
             <CTA />
